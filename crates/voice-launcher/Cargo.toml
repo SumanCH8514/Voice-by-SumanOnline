@@ -1,0 +1,16 @@
+[package]
+name = "voice-by-sumanonline-launcher"
+version = "0.1.0"
+edition = "2021"
+authors = ["SumanOnline"]
+description = "Native Windows Desktop Launcher for Voice by SumanOnline"
+
+[dependencies]
+windows-sys = { version = "0.59.0", features = ["Win32_System_Threading", "Win32_Foundation", "Win32_UI_WindowsAndMessaging"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
