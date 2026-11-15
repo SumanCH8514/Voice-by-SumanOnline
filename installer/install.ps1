@@ -26,22 +26,15 @@ $WshShell = New-Object -ComObject WScript.Shell
 $DesktopPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
 $ProgramsPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Programs)
 
-$PythonwExe = "$ProjectRoot\.venv\Scripts\pythonw.exe"
-if (-not (Test-Path $PythonwExe)) {
-    $PythonwExe = (Get-Command pythonw.exe -ErrorAction SilentlyContinue).Source
-    if (-not $PythonwExe) {
-        $PythonwExe = "pythonw.exe"
-    }
-}
-
+$StartBatch = "$ProjectRoot\start_desktop.bat"
 $IconPath = "$ProjectRoot\assets\logo.ico"
 
 Write-Host "[2/4] Creating Desktop Shortcut..." -ForegroundColor Yellow
 $DesktopShortcut = $WshShell.CreateShortcut("$DesktopPath\Voice by SumanOnline.lnk")
-$DesktopShortcut.TargetPath = $PythonwExe
-$DesktopShortcut.Arguments = "-m voice_by_sumanonline.main --ui"
+$DesktopShortcut.TargetPath = $StartBatch
 $DesktopShortcut.WorkingDirectory = $ProjectRoot
 $DesktopShortcut.Description = "Voice by SumanOnline - AI Voice Dictation App"
+$DesktopShortcut.WindowStyle = 7
 if (Test-Path $IconPath) {
     $DesktopShortcut.IconLocation = "$IconPath,0"
 }
@@ -53,10 +46,10 @@ if (-not (Test-Path $StartMenuDir)) {
     New-Item -ItemType Directory -Path $StartMenuDir -Force | Out-Null
 }
 $StartMenuShortcut = $WshShell.CreateShortcut("$StartMenuDir\Voice by SumanOnline.lnk")
-$StartMenuShortcut.TargetPath = $PythonwExe
-$StartMenuShortcut.Arguments = "-m voice_by_sumanonline.main --ui"
+$StartMenuShortcut.TargetPath = $StartBatch
 $StartMenuShortcut.WorkingDirectory = $ProjectRoot
 $StartMenuShortcut.Description = "Voice by SumanOnline - AI Voice Dictation App"
+$StartMenuShortcut.WindowStyle = 7
 if (Test-Path $IconPath) {
     $StartMenuShortcut.IconLocation = "$IconPath,0"
 }
