@@ -1,118 +1,195 @@
 # Voice by SumanOnline
 
-A fast, cross-platform push-to-talk and hands-free AI voice dictation desktop application built with the exact experience of **Wispr Flow**.
+<div align="center">
 
-Hold **Right Alt / Right Option** (or tap to toggle in hands-free mode) to speak, and release to automatically transcribe locally with Faster-Whisper, clean up with anti-hallucination AI formatting, and paste the text directly at your active cursor across any application without stealing window focus.
+![Voice by SumanOnline Logo](assets/Voice%20by%20SumanOnline%20logo.png)
+
+### Intelligent AI Voice Dictation Desktop Application for Windows
+**A SumanOnline Project**
+
+[![Release](https://img.shields.io/github/v/release/SumanCH8514/Voice-by-SumanOnline?color=6366F1&label=Release&style=flat-square)](https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011%20(x64)-0078D4?style=flat-square&logo=windows)](https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest)
+[![Engine](https://img.shields.io/badge/ASR-Faster--Whisper%20(Local%20Offline)-10B981?style=flat-square)](https://github.com/SYSTRAN/faster-whisper)
+[![Runtime](https://img.shields.io/badge/Python-3.12%20Standalone%20Bundled-F59E0B?style=flat-square&logo=python)](https://github.com/SumanCH8514/Voice-by-SumanOnline)
+[![License](https://img.shields.io/badge/License-MIT-8B5CF6?style=flat-square)](LICENSE)
+
+[Download Setup (.exe)](https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest) • [Official Website](https://sumanch8514.github.io/Voice-by-SumanOnline/) • [Report Issue](https://github.com/SumanCH8514/Voice-by-SumanOnline/issues)
+
+</div>
 
 ---
 
-## Highlights & Features
+## Overview
 
-### 1. Modern Desktop Experience (Wispr Flow Style)
-- **Floating HUD Pill**: A non-activating, glassmorphic HUD overlay floating gracefully above your taskbar. Includes real-time audio-reactive soundwave visualizer, live provisional transcript preview, and state indicators.
-- **Voice Studio Dashboard**: Full desktop studio with interactive dictation playground, raw vs polished comparison, live latency telemetry, and input dB meters.
-- **Hands-Free Toggle Mode**: Choose between classic push-to-talk (hold to speak) or toggle mode (tap once to begin, tap again to finish and inject).
+**Voice by SumanOnline** is a high-performance, system-wide AI voice dictation desktop application engineered with the precision and responsiveness of **Wispr Flow**.
 
-### 2. Intelligent Prompt & Style Presets
-- **Smart Dictation (Wispr Flow Flagship)**: Resolves speech repairs and self-corrections ("tomorrow at 2 wait actually 4" → "tomorrow at 4:00"), strips filler words ("um", "uh", "you know", "basically"), maps spoken punctuation, and never follows spoken questions/commands as instructions.
-- **Executive & Formal**: Polished corporate communication for emails, memos, and executive updates.
-- **Casual & Direct**: Natural, friendly conversational tone for Slack, WhatsApp, and social messaging.
-- **Structured Notes**: Automatically converts stream-of-consciousness speech into structured markdown bullet points.
-- **Developer / Code Mode**: Preserves camelCase, snake_case, PascalCase, terminal flags, and wraps code tokens in markdown backticks.
-- **Custom Prompt Studio**: Define and test your own system instructions interactively with the prompt sandbox.
+Press and hold **Right Alt** (or **double-tap for hands-free mode**) to speak from anywhere in Windows. Release the key, and Voice by SumanOnline automatically transcribes your speech locally using Faster-Whisper, cleans up filler words and speech repairs through a multi-tier AI formatting pipeline, and injects the formatted text directly at your active cursor across any desktop application without stealing focus.
+
+---
+
+## Core Capabilities
+
+### 1. Modern Desktop Integration
+- **Non-Activating Floating HUD**: A glassmorphic HUD pill overlay positioned above your taskbar. It remains click-transparent and never steals keyboard focus from Word, Slack, VS Code, Discord, or your browser.
+- **Dual Hotkey Modes**:
+  - **Push-to-Talk**: Hold **Right Alt** (or AltGr) to dictate; release to transcribe and auto-inject.
+  - **Hands-Free Double-Tap**: Rapidly double-tap Right Alt to latch recording on. Speak freely, then tap once more to finalize and paste.
+- **Native Windows Shell**: Built with Microsoft Edge WebView2 via `pywebview`, delivering a responsive desktop UI running on local loopback IPC.
+
+### 2. Five Wispr Flow Style Presets
+- **Smart Dictation**: Strips verbal disfluencies ("um", "uh", "like"), resolves self-corrections (e.g., *"meet me at four wait sorry five"* becomes *"meet me at 5:00"*), and converts spoken punctuation into typographic marks.
+- **Executive & Formal**: Structures thoughts into corporate memos, formal business emails, and executive reports.
+- **Casual & Direct**: Conversational tone tailored for fast team chats on Slack, Teams, WhatsApp, and Discord.
+- **Bullet Notes**: Transforms stream-of-consciousness brainstorms into structured markdown outlines and action items.
+- **Developer / Code Mode**: Preserves identifiers, camelCase, snake_case, terminal flags, and backtick code spans.
 
 ### 3. Personal Replacement Dictionary
-- Word-boundary and case-insensitive replacements applied immediately after transcript cleanup (e.g., `"suman online" → "SumanOnline"`, `"pie torch" → "PyTorch"`, `"kubernetes" → "K8s"`).
-- Add, search, delete, and import/export dictionary rules via JSON.
+- Custom word-boundary and regex replacement rules executed immediately post-cleanup.
+- Ensures domain-specific acronyms, technical libraries, and proper nouns are capitalized and formatted exactly as intended (e.g., `suman online` → `SumanOnline`, `pie torch` → `PyTorch`).
 
-### 4. Productivity Analytics
-- Live dashboard displaying total dictations, total words spoken, and estimated typing hours saved (calculated based on average 150 wpm speech vs 40 wpm typing).
-- Searchable transcript history log with one-click copy and processing latency metrics.
+### 4. 3-Tier Resilient AI Pipeline
+- **Tier 1 — Groq Cloud**: Sub-200ms latency formatting via high-throughput LLMs (`qwen/qwen3.8-27b`, `llama-3.3-70b-versatile`). Keys are encrypted in the Windows Credential Manager via OS Keychain APIs.
+- **Tier 2 — Local Ollama**: Zero-cloud private fallback executing `llama3.2:3b` at `http://127.0.0.1:11434`.
+- **Tier 3 — Deterministic Offline Rule Engine**: Pure-regex offline fallback guaranteeing punctuation restoration and verbal filler elimination even with zero internet connectivity.
 
-### 5. Multi-Tier AI Cleanup Pipeline
-- **Tier 1 — Groq Cloud**: Sub-200ms latency formatting via fast LLMs (`qwen/qwen3.8-27b`, `llama-3.3-70b-versatile`). Key is stored securely in the native OS Keychain via `keyring` (never stored in plaintext).
-- **Tier 2 — Local Ollama**: Zero-cloud private local LLM fallback (`llama3.2:3b` at `http://localhost:11434`).
-- **Tier 3 — Deterministic Offline Rule Engine**: Pure-regex offline fallback that strips filler words, maps spoken punctuation, and formats sentence casing.
+### 5. Acoustic Resilience
+- Polyphase anti-aliasing resampling (`scipy.signal.resample_poly`) converts hardware-native microphone rates (44.1 kHz, 48 kHz, 96 kHz) into pristine 16 kHz mono frames.
+- Detects hardware silence and PortAudio device dropouts with automatic fallback to secondary input devices.
 
-### 6. Hardware Audio Resilience
-- Opens microphones at their native sample rate and downmixes to 16 kHz mono via polyphase resampling (`scipy.signal.resample_poly`).
-- Detects continuous digital silence or PortAudio wireless disconnects, reinitializes the audio backend, and switches to fallback microphones automatically.
+---
+
+## Architecture
+
+```
+[ Microphone Capture ]
+         │ (Native Sample Rate)
+         ▼
+[ Polyphase Resampler ] ──> 16 kHz Mono Float32
+         │
+         ├──> [ Vosk Engine ] ──> Streaming Interim Preview HUD
+         │
+         ▼ (Key Release / Unlatch)
+[ Faster-Whisper ASR ] ──> Raw Whisper Transcription
+         │
+         ▼
+[ 3-Tier AI Formatter ] (Smart / Executive / Casual / Notes / Developer)
+   ├── Tier 1: Groq Cloud API (<200ms)
+   ├── Tier 2: Local Ollama (127.0.0.1:11434)
+   └── Tier 3: Deterministic Regex Engine (Offline)
+         │
+         ▼
+[ Personal Dictionary ] ──> Domain-specific terminology replacement
+         │
+         ▼
+[ Win32 Cursor Injector ] ──> Synthesizes Ctrl+V at active window without focus loss
+```
+
+---
+
+## Installation
+
+### For Users (Standalone Windows Installer)
+
+No Python, Git, or developer tooling required. Everything is self-contained.
+
+1. Download **`Voice-by-SumanOnline-Setup.exe`** from the [Latest Releases](https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest).
+2. Run the installer. It installs the application, standalone Python 3.12 runtime, and desktop shortcuts.
+3. Launch **Voice by SumanOnline** from your Desktop or Start Menu.
+4. Press and hold **Right Alt** in any program and begin dictating.
+
+### For Developers
+
+Requirements:
+- Windows 10 / 11 (64-bit)
+- Python 3.12+
+- `uv` package manager
+
+```powershell
+git clone https://github.com/SumanCH8514/Voice-by-SumanOnline.git
+cd "Voice-by-SumanOnline"
+
+uv sync
+
+uv run python -m voice_by_sumanonline.main --ui
+```
+
+To run without opening the Voice Studio dashboard:
+```powershell
+uv run python -m voice_by_sumanonline.main
+```
+
+---
+
+## Keyboard Controls
+
+| Control | Action |
+| :--- | :--- |
+| **Right Alt** (Hold) | Push-to-Talk: Record voice while held, paste upon release |
+| **Right Alt** (Double-Tap) | Hands-Free Mode: Tap twice rapidly to latch recording; tap once to finish and paste |
+| **AltGr** | Automatically supported on European and international layouts |
+| **System Tray Icon** | Access Voice Studio, toggle microphone, switch presets, or exit |
 
 ---
 
 ## Project Structure
 
 ```
-├── voice_by_sumanonline/      # Core Voice Engine & Desktop Backend
-│   ├── audio.py               # Resilient audio capture & polyphase resampling
-│   ├── config.py              # Configuration manager (~/.config/voice_by_sumanonline)
-│   ├── dictionary.py          # Word-boundary personal dictionary engine
-│   ├── format.py              # 3-tier cleanup with 5 Wispr Flow style presets
-│   ├── history.py             # Dictation history log and analytics tracking
-│   ├── hotkey.py              # Push-to-talk & hands-free toggle listener
-│   ├── hud.py                 # Non-activating floating HUD overlay
-│   ├── inject.py              # Cursor text injection & clipboard restore
-│   ├── keychain.py            # OS Keychain integration for API keys
-│   ├── preview.py             # Streaming live preview via Vosk
-│   ├── server.py              # FastAPI & WebSocket bridge (port 48922)
-│   ├── startup.py             # Windows Run registry & startup integration
-│   ├── transcribe.py          # Local speech recognition via faster-whisper
-│   ├── tray.py                # System tray icon & background controller
-│   └── main.py                # Main orchestration loop
-├── crates/voice-launcher/     # Native Windows Rust desktop launcher (silent, single-instance)
-│   ├── Cargo.toml
-│   └── src/main.rs
-├── ui/                        # Modern React 19 + TypeScript + Tailwind UI
-│   ├── src/
-│   │   ├── components/        # Studio, Presets, Dictionary, History, Audio, HUD
-│   │   ├── services/          # REST & WebSocket API client
-│   │   └── App.tsx            # Desktop studio interface
-│   ├── package.json
-│   └── vite.config.ts
-├── installer/                 # Installation scripts
-│   ├── install.ps1            # Automated PowerShell desktop & shortcut installer
-│   └── setup.bat              # One-click Windows setup runner
-├── start_desktop.bat          # Instant double-click launcher
-└── pyproject.toml             # Project manifest & dependencies
+├── voice_by_sumanonline/
+│   ├── audio.py
+│   ├── config.py
+│   ├── dictionary.py
+│   ├── format.py
+│   ├── history.py
+│   ├── hotkey.py
+│   ├── hud.py
+│   ├── inject.py
+│   ├── keychain.py
+│   ├── preview.py
+│   ├── server.py
+│   ├── startup.py
+│   ├── transcribe.py
+│   ├── tray.py
+│   └── main.py
+├── ui/
+│   ├── src/components/
+│   ├── src/services/
+│   └── src/App.tsx
+├── docs/
+│   ├── index.html
+│   └── assets/
+├── installer/
+│   ├── inno_setup.iss
+│   └── build_installer.ps1
+└── pyproject.toml
 ```
 
 ---
 
-## Installation & Setup
+## Security & Privacy
 
-### Windows 10 / 11
+- **Local Speech Processing**: Speech recognition runs locally on your device via Faster-Whisper. Audio waveforms never leave your machine unless cloud formatting is explicitly enabled.
+- **Secure Credential Storage**: Cloud API tokens (e.g. Groq) are stored securely in the Windows Credential Manager using the OS Keychain subsystem. They are never written to disk in plain text or exposed to the frontend.
+- **Cursor Focus Protection**: The floating HUD utilizes non-activating Win32 window styles (`WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST`) so your active window never drops focus during recording.
 
-#### 1. Windows Installer (.msi Package)
-Double-click the generated MSI package:
-- **`installer\dist\Voice-by-SumanOnline-Setup.msi`**
+---
 
-Or rebuild/regenerate anytime via:
-```powershell
-powershell -ExecutionPolicy Bypass -File .\installer\build_msi.ps1
-```
+## Contributing
 
-#### 2. One-Click Setup Script
-Double-click `installer\setup.bat` or run in PowerShell:
-```powershell
-powershell -ExecutionPolicy Bypass -File .\installer\install.ps1
-```
-This automatically:
-- Synchronizes the Python environment with `uv`
-- Creates a Start Menu shortcut: `Voice by SumanOnline`
-- Creates a Desktop shortcut: `Voice by SumanOnline.lnk`
-
-#### 3. Running the Application
-Double-click `start_desktop.bat` or launch from terminal:
-```powershell
-uv run python -m voice_by_sumanonline.main --ui
-```
-
-### Keyboard Shortcuts
-- **Hold Right Alt**: Speak while held, release to paste.
-- **Hands-Free Mode**: Toggle on in Settings to tap once to speak, tap again to paste.
-- On European/international keyboards, **AltGr** is recognized automatically.
+Contributions, bug reports, and suggestions are welcome.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m "Add amazing feature"`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
 ## License
-MIT License.
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+
+---
+
+<div align="center">
+<b>Voice by SumanOnline</b> — Built with passion by SumanOnline.
+</div>
