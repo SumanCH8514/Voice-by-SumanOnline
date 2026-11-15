@@ -48,10 +48,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div>
         <div className="p-6 border-b border-white/5">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 p-[1px] shadow-lg shadow-indigo-500/20">
-              <div className="w-full h-full bg-[#0B0F19] rounded-[11px] flex items-center justify-center">
-                <Radio className="w-5 h-5 text-indigo-400 animate-pulse" />
-              </div>
+            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/25 border border-indigo-500/30 flex-shrink-0">
+              <img src="/logo.png" alt="Voice by SumanOnline" className="w-full h-full object-cover" />
             </div>
             <div>
               <h1 className="font-semibold text-white tracking-tight leading-none text-base">

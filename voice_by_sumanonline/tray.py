@@ -3,12 +3,23 @@ from __future__ import annotations
 import logging
 import sys
 import threading
+from pathlib import Path
 from typing import Callable, Optional
 
 log = logging.getLogger("voice_by_sumanonline.tray")
 
+_ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+
 def _make_icon_image(muted: bool = False):
     from PIL import Image, ImageDraw
+
+    icon_name = "tray_icon_muted.png" if muted else "tray_icon.png"
+    asset_file = _ASSETS_DIR / icon_name
+    if asset_file.exists():
+        try:
+            return Image.open(asset_file).convert("RGBA")
+        except Exception:
+            pass
 
     size = 64
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))

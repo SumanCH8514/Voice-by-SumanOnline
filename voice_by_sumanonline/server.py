@@ -252,6 +252,23 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
     except Exception:
         ws_manager.disconnect(websocket)
 
+_ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets"
+
+@app.get("/logo.png")
+@app.get("/assets/logo.png")
+async def get_app_logo():
+    logo_file = _ASSETS_DIR / "logo.png"
+    if logo_file.exists():
+        return FileResponse(str(logo_file), media_type="image/png")
+    return JSONResponse(status_code=404, content={"error": "Logo not found"})
+
+@app.get("/favicon.ico")
+async def get_app_favicon():
+    ico_file = _ASSETS_DIR / "logo.ico"
+    if ico_file.exists():
+        return FileResponse(str(ico_file), media_type="image/x-icon")
+    return JSONResponse(status_code=404, content={"error": "Favicon not found"})
+
 ui_dist = Path(__file__).resolve().parent.parent / "ui" / "dist"
 if ui_dist.exists() and (ui_dist / "index.html").exists():
     app.mount("/", StaticFiles(directory=str(ui_dist), html=True), name="static_ui")
@@ -263,6 +280,7 @@ else:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <title>Voice by SumanOnline — Voice Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -273,10 +291,8 @@ else:
   <div class="max-w-4xl mx-auto w-full p-6 space-y-6">
     <header class="flex items-center justify-between border-b border-slate-800 pb-5">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-          </svg>
+        <div class="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/25 border border-indigo-500/30 flex-shrink-0">
+          <img src="/logo.png" alt="Voice by SumanOnline" class="w-full h-full object-cover">
         </div>
         <div>
           <h1 class="text-lg font-bold tracking-tight text-white">Voice by SumanOnline</h1>
