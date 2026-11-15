@@ -25,6 +25,8 @@ class HistoryEntry:
     audio_duration_s: float
     latency_s: float
     word_count: int
+    whisper_s: float = 0.0
+    format_s: float = 0.0
 
 def load_history() -> List[Dict[str, Any]]:
     if not HISTORY_FILE.exists():
@@ -56,6 +58,8 @@ def record_dictation(
     tier: str,
     audio_duration_s: float,
     latency_s: float,
+    whisper_s: float = 0.0,
+    format_s: float = 0.0,
 ) -> HistoryEntry:
     entry = HistoryEntry(
         id=f"rec_{int(time.time() * 1000)}",
@@ -67,6 +71,8 @@ def record_dictation(
         audio_duration_s=round(audio_duration_s, 2),
         latency_s=round(latency_s, 2),
         word_count=len(cleaned_text.split()),
+        whisper_s=round(whisper_s, 2),
+        format_s=round(format_s, 2),
     )
     entries = load_history()
     entries.insert(0, asdict(entry))

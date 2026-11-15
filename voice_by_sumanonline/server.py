@@ -108,8 +108,8 @@ def get_latest_dictation() -> Optional[Dict[str, Any]]:
             "tier": latest.get("tier", ""),
             "preset": latest.get("preset", "smart"),
             "latency_s": latest.get("latency_s", 0),
-            "whisper_s": 0,
-            "format_s": 0,
+            "whisper_s": latest.get("whisper_s", 0),
+            "format_s": latest.get("format_s", 0),
             "audio_duration_s": latest.get("audio_duration_s", 0),
         }
     return None

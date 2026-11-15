@@ -275,6 +275,8 @@ def _run_finalize(
             tier=tier_label,
             audio_duration_s=audio_duration_s,
             latency_s=total_latency,
+            whisper_s=whisper_s,
+            format_s=format_s,
         )
 
         dictation_payload = {

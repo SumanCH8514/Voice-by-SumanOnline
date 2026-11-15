@@ -31,6 +31,7 @@ class PushToTalk:
         self._press_time = 0.0
         self._waiting_for_second_tap = False
         self._is_latched = False
+        self._just_unlatched = False
         self._tap_timer: Optional[threading.Timer] = None
         self._lock = threading.Lock()
         self._listener: Optional[Any] = None
@@ -192,6 +193,7 @@ class PushToTalk:
 
                 if self._is_latched:
                     self._is_latched = False
+                    self._just_unlatched = True
                     trigger_stop = True
                 elif self._waiting_for_second_tap:
                     self._cancel_tap_timer_locked()
@@ -220,6 +222,10 @@ class PushToTalk:
             if not self._held:
                 return
             self._held = False
+
+            if self._just_unlatched:
+                self._just_unlatched = False
+                return
 
             if self._is_latched:
                 return
