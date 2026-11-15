@@ -11,6 +11,17 @@ import webbrowser
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w", encoding="utf-8")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w", encoding="utf-8")
+
+try:
+    import ctypes
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("SumanOnline.Voice.Desktop.1")
+except Exception:
+    pass
+
 from dotenv import load_dotenv
 
 import numpy as np
@@ -322,10 +333,24 @@ def _run_finalize(
 
 def _start_server(port: int = 48922) -> None:
     def _run():
-        uvicorn.run(fastapi_app, host="127.0.0.1", port=port, log_level="warning")
+        try:
+            uvicorn.run(fastapi_app, host="127.0.0.1", port=port, log_config=None)
+        except Exception as e:
+            log.exception("Server failed to start on port %s: %s", port, e)
 
     thread = threading.Thread(target=_run, name="VoiceStudioServer", daemon=True)
     thread.start()
+
+def _wait_for_server(port: int = 48922, timeout: float = 8.0) -> bool:
+    import socket
+    start = time.monotonic()
+    while time.monotonic() - start < timeout:
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=0.2):
+                return True
+        except (OSError, ConnectionRefusedError):
+            time.sleep(0.05)
+    return False
 
 def main(argv: Optional[list] = None) -> int:
     _setup_logging()
@@ -497,7 +522,7 @@ def main(argv: Optional[list] = None) -> int:
                 return
             except Exception:
                 pass
-        url = f"http://localhost:{server_port}"
+        url = f"http://127.0.0.1:{server_port}"
         webbrowser.open(url)
 
     def on_closing():
@@ -543,12 +568,13 @@ def main(argv: Optional[list] = None) -> int:
     tray.start()
 
     log.info("Voice by SumanOnline is running. Push-to-talk key: %s", hotkey_spec)
-    log.info("Voice Studio URL: http://localhost:%d", server_port)
+    log.info("Voice Studio URL: http://127.0.0.1:%d", server_port)
 
     hud_thread = threading.Thread(target=hud.run, name="HudThread", daemon=True)
     hud_thread.start()
 
-    url = f"http://localhost:{server_port}"
+    _wait_for_server(server_port, timeout=8.0)
+    url = f"http://127.0.0.1:{server_port}"
     try:
         import webview
         show_window = bool(args.ui)
@@ -562,6 +588,24 @@ def main(argv: Optional[list] = None) -> int:
             hidden=not show_window,
         )
         native_win.events.closing += on_closing
+
+        def _apply_window_icon():
+            try:
+                import ctypes
+                icon_file = _PROJECT_ROOT / "assets" / "logo.ico"
+                if not icon_file.exists():
+                    icon_file = Path(sys.executable).parent.parent / "assets" / "logo.ico"
+                if icon_file.exists():
+                    hwnd = ctypes.windll.user32.FindWindowW(None, "Voice by SumanOnline")
+                    if hwnd:
+                        hicon = ctypes.windll.user32.LoadImageW(None, str(icon_file), 1, 0, 0, 0x00000010 | 0x00000040)
+                        if hicon:
+                            ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 0, hicon)
+                            ctypes.windll.user32.SendMessageW(hwnd, 0x0080, 1, hicon)
+            except Exception:
+                pass
+
+        native_win.events.shown += _apply_window_icon
         webview.start()
     except Exception as e:
         log.warning("pywebview failed (%s); running headless with browser support", e)

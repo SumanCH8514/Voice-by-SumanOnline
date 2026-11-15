@@ -15,6 +15,7 @@ DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\assets\logo.ico
 CloseApplications=yes
 RestartApplications=no
+ChangesAssociations=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
