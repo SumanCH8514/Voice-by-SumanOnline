@@ -9,6 +9,7 @@ OutputBaseFilename=Voice-by-SumanOnline-Setup
 SetupIconFile=..\assets\logo.ico
 Compression=lzma2
 SolidCompression=yes
+ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequired=lowest
 DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\assets\logo.ico
