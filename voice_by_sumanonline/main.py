@@ -479,11 +479,35 @@ def main(argv: Optional[list] = None) -> int:
     app_state.set_ptt(ptt)
     ptt.start()
 
+    native_win = None
+    quitting = False
+
     def on_open_studio() -> None:
+        nonlocal native_win
+        if native_win is not None:
+            try:
+                native_win.show()
+                native_win.restore()
+                return
+            except Exception:
+                pass
         url = f"http://localhost:{server_port}"
         webbrowser.open(url)
 
+    def on_closing():
+        nonlocal native_win, quitting
+        if quitting:
+            return True
+        if native_win is not None:
+            try:
+                native_win.hide()
+            except Exception:
+                pass
+        return False
+
     def on_quit() -> None:
+        nonlocal quitting, native_win
+        quitting = True
         log.info("Quitting Voice by SumanOnline...")
         try:
             save_config(app_state.config, config_path)
@@ -495,6 +519,12 @@ def main(argv: Optional[list] = None) -> int:
         hud.close()
         if app_state._tray:
             app_state._tray.stop()
+        if native_win is not None:
+            try:
+                native_win.events.closing -= on_closing
+                native_win.destroy()
+            except Exception:
+                pass
         os._exit(0)
 
     tray = TrayController(
@@ -509,13 +539,29 @@ def main(argv: Optional[list] = None) -> int:
     log.info("Voice by SumanOnline is running. Push-to-talk key: %s", hotkey_spec)
     log.info("Voice Studio URL: http://localhost:%d", server_port)
 
-    if args.ui:
-        on_open_studio()
+    hud_thread = threading.Thread(target=hud.run, name="HudThread", daemon=True)
+    hud_thread.start()
 
+    url = f"http://localhost:{server_port}"
     try:
-        hud.run()
-    except KeyboardInterrupt:
-        on_quit()
+        import webview
+        show_window = bool(args.ui)
+        native_win = webview.create_window(
+            "Voice by SumanOnline",
+            url=url,
+            width=1160,
+            height=760,
+            min_size=(900, 620),
+            background_color="#080C14",
+            hidden=not show_window,
+        )
+        native_win.events.closing += on_closing
+        webview.start()
+    except Exception as e:
+        log.warning("pywebview failed (%s); running headless with browser support", e)
+        if args.ui:
+            on_open_studio()
+        hud_thread.join()
 
     return 0
 
