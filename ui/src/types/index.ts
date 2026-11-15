@@ -92,4 +92,14 @@ export interface AppStatus {
   is_recording?: boolean;
   is_processing?: boolean;
   muted?: boolean;
+  latest_dictation?: {
+    raw: string;
+    cleaned: string;
+    tier: string;
+    preset: string;
+    latency_s: number;
+    whisper_s: number;
+    format_s: number;
+    audio_duration_s: number;
+  };
 }

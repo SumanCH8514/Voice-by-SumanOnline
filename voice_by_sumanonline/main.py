@@ -29,7 +29,7 @@ from .hud import HUD
 from .inject import accessibility_hint, inject_text, is_trusted
 from .keychain import get_api_key, set_api_key
 from .preview import StreamingPreview
-from .server import app as fastapi_app, set_engine_state_callback, ws_manager
+from .server import app as fastapi_app, set_engine_state_callback, set_latest_dictation, ws_manager
 from .startup import disable as startup_disable, enable as startup_enable, is_enabled as startup_is_enabled
 from .transcribe import set_model_name, transcribe
 from .tray import TrayController
@@ -277,8 +277,7 @@ def _run_finalize(
             latency_s=total_latency,
         )
 
-        ws_manager.threadsafe_broadcast({
-            "type": "final_result",
+        dictation_payload = {
             "raw": raw,
             "cleaned": cleaned,
             "tier": tier_label,
@@ -287,6 +286,11 @@ def _run_finalize(
             "whisper_s": round(whisper_s, 2),
             "format_s": round(format_s, 2),
             "audio_duration_s": round(audio_duration_s, 2),
+        }
+        set_latest_dictation(dictation_payload)
+        ws_manager.threadsafe_broadcast({
+            "type": "final_result",
+            **dictation_payload,
         })
 
         stats = config.setdefault("stats", {})

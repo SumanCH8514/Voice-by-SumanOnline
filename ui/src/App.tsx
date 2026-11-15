@@ -68,6 +68,17 @@ export const App: React.FC = () => {
         setIsMuted(bool(st.muted));
         if (st.is_recording) setIsRecording(true);
         if (st.is_processing) setIsProcessing(true);
+        if (st.latest_dictation) {
+          setLastRaw(st.latest_dictation.raw || '');
+          setLastCleaned(st.latest_dictation.cleaned || '');
+          setLatencyBreakdown({
+            audio_s: st.latest_dictation.audio_duration_s || 0,
+            whisper_s: st.latest_dictation.whisper_s || 0,
+            format_s: st.latest_dictation.format_s || 0,
+            total_s: st.latest_dictation.latency_s || 0,
+            tier: st.latest_dictation.tier || '',
+          });
+        }
       })
       .catch(() => {});
 

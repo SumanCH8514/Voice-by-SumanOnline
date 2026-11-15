@@ -85,10 +85,34 @@ class TestPromptRequest(BaseModel):
     tier_override: Optional[str] = None
 
 _engine_state_callback: Optional[Any] = None
+_latest_dictation: Optional[Dict[str, Any]] = None
 
 def set_engine_state_callback(cb: Any) -> None:
     global _engine_state_callback
     _engine_state_callback = cb
+
+def set_latest_dictation(d: Dict[str, Any]) -> None:
+    global _latest_dictation
+    _latest_dictation = d
+
+def get_latest_dictation() -> Optional[Dict[str, Any]]:
+    global _latest_dictation
+    if _latest_dictation is not None:
+        return _latest_dictation
+    history = load_history()
+    if history:
+        latest = history[0]
+        return {
+            "raw": latest.get("raw_text", ""),
+            "cleaned": latest.get("cleaned_text", ""),
+            "tier": latest.get("tier", ""),
+            "preset": latest.get("preset", "smart"),
+            "latency_s": latest.get("latency_s", 0),
+            "whisper_s": 0,
+            "format_s": 0,
+            "audio_duration_s": latest.get("audio_duration_s", 0),
+        }
+    return None
 
 @app.on_event("startup")
 async def startup_event() -> None:
@@ -100,6 +124,7 @@ async def get_status() -> Dict[str, Any]:
     cfg = load_config()
     engine_status = _engine_state_callback() if _engine_state_callback else {}
     has_groq_key = bool(get_api_key())
+    latest = get_latest_dictation()
     return {
         "status": "ready",
         "app_name": "Voice by SumanOnline",
@@ -109,6 +134,7 @@ async def get_status() -> Dict[str, Any]:
         "hotkey": cfg.get("hotkey", "Key.alt_r"),
         "whisper_model": cfg.get("transcription", {}).get("model", "base"),
         "preview_enabled": cfg.get("transcription", {}).get("preview_enabled", True),
+        "latest_dictation": latest,
         **engine_status,
     }
 
@@ -244,6 +270,15 @@ async def toggle_mute() -> Dict[str, Any]:
 @app.websocket("/ws/live")
 async def websocket_endpoint(websocket: WebSocket) -> None:
     await ws_manager.connect(websocket)
+    latest = get_latest_dictation()
+    if latest:
+        try:
+            await websocket.send_json({
+                "type": "final_result",
+                **latest,
+            })
+        except Exception:
+            pass
     try:
         while True:
             await websocket.receive_text()

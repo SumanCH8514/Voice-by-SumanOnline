@@ -117,16 +117,47 @@ export async function triggerToggleMute(): Promise<{ success: boolean; muted: bo
   return res.json();
 }
 
-export function createLiveWebSocket(onMessage: (data: any) => void): WebSocket {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const host = window.location.host || 'localhost:48922';
-  const ws = new WebSocket(`${protocol}//${host}/ws/live`);
-  ws.onmessage = (event) => {
+export function createLiveWebSocket(onMessage: (data: any) => void): { close: () => void } {
+  let isClosed = false;
+  let ws: WebSocket | null = null;
+  let reconnectTimeout: any = null;
+
+  function connect() {
+    if (isClosed) return;
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = window.location.host || '127.0.0.1:48922';
     try {
-      const data = JSON.parse(event.data);
-      onMessage(data);
+      ws = new WebSocket(`${protocol}//${host}/ws/live`);
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          onMessage(data);
+        } catch {}
+      };
+      ws.onclose = () => {
+        if (!isClosed) {
+          reconnectTimeout = setTimeout(connect, 1000);
+        }
+      };
+      ws.onerror = () => {
+        try {
+          ws?.close();
+        } catch {}
+      };
     } catch {
+      if (!isClosed) {
+        reconnectTimeout = setTimeout(connect, 1500);
+      }
     }
+  }
+
+  connect();
+
+  return {
+    close: () => {
+      isClosed = true;
+      if (reconnectTimeout) clearTimeout(reconnectTimeout);
+      if (ws) ws.close();
+    },
   };
-  return ws;
 }
