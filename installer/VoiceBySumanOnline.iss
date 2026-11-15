@@ -2,7 +2,7 @@
 AppName=Voice by SumanOnline
 AppVersion=0.1.0
 AppPublisher=SumanOnline
-DefaultDirName={userappdata}\Programs\Voice by SumanOnline
+DefaultDirName={localappdata}\Programs\Voice by SumanOnline
 DefaultGroupName=Voice by SumanOnline
 OutputDir=dist
 OutputBaseFilename=Voice-by-SumanOnline-Setup
@@ -26,6 +26,7 @@ Source: "..\\uv.lock"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\assets\\*"; DestDir: "{app}\\assets"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\voice_by_sumanonline\\*"; DestDir: "{app}\\voice_by_sumanonline"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\\ui\\dist\\*"; DestDir: "{app}\\ui\\dist"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\installer\\install.ps1"; DestDir: "{app}\\installer"; Flags: ignoreversion
 Source: "..\\crates\\voice-launcher\\*"; DestDir: "{app}\\crates\\voice-launcher"; Flags: ignoreversion recursesubdirs createallsubdirs
 
