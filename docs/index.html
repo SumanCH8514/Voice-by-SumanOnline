@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice by SumanOnline — a SumanOnline Project</title>
+  <meta name="description" content="Voice by SumanOnline turns your voice into clean, formatted writing in any application on your machine. a SumanOnline Project.">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['"Instrument Serif"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            bg: '#07090E',
+            panel: '#0C101A',
+            panelElev: '#121726',
+            accent: '#818CF8',
+            accentGlow: '#6366F1',
+            borderSubtle: 'rgba(255, 255, 255, 0.08)',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes waveBar {
+      0%, 100% { opacity: 0.45; transform: scaleY(0.35); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+    .wave-bar {
+      animation: waveBar 1.2s ease-in-out infinite;
+      transform-origin: bottom;
+    }
+    .glow-gradient {
+      background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.18) 0%, rgba(7, 9, 14, 0) 70%);
+    }
+    .glass-card {
+      background: linear-gradient(180deg, rgba(18, 23, 38, 0.7) 0%, rgba(12, 16, 26, 0.9) 100%);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card:hover {
+      border-color: rgba(129, 140, 248, 0.3);
+      box-shadow: 0 12px 40px -10px rgba(99, 102, 241, 0.15);
+    }
+    .badge-glow {
+      box-shadow: 0 0 20px -3px rgba(129, 140, 248, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-[#07090E] text-slate-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 min-h-screen overflow-x-hidden font-sans">
+
+  <nav class="fixed top-0 inset-x-0 z-50 bg-[#07090E]/80 backdrop-blur-xl border-b border-white/5 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <a href="#" class="flex items-center space-x-3.5 group">
+        <div class="w-10 h-10 rounded-xl overflow-hidden border border-indigo-500/40 shadow-lg shadow-indigo-500/20 flex-shrink-0 group-hover:scale-105 transition-transform">
+          <img src="assets/logo.png" alt="Voice by SumanOnline Logo" class="w-full h-full object-cover">
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-white tracking-tight text-lg leading-none">Voice</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">v0.1.0</span>
+          </div>
+          <span class="text-[11px] font-medium text-slate-400 tracking-wider uppercase block mt-0.5">by SumanOnline</span>
+        </div>
+      </a>
+
+      <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+        <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#how" class="hover:text-white transition-colors">How it Works</a>
+        <a href="#presets" class="hover:text-white transition-colors">Presets</a>
+        <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+        <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+      </div>
+
+      <div class="hidden md:flex items-center space-x-4">
+        <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 border border-white/10 transition-all">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span>GitHub</span>
+        </a>
+        <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest" class="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 badge-glow transition-all">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Download Free</span>
+        </a>
+      </div>
+
+      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-6 border-b border-white/10 bg-[#0A0D15] space-y-3">
+      <a href="#features" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Features</a>
+      <a href="#how" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">How it Works</a>
+      <a href="#presets" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Presets</a>
+      <a href="#pricing" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">Pricing</a>
+      <a href="#faq" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-300 hover:text-white hover:bg-white/5">FAQ</a>
+      <div class="pt-2 flex flex-col space-y-2">
+        <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest" class="flex items-center justify-center space-x-2 w-full py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Download for Windows (.exe)</span>
+        </a>
+        <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center space-x-2 w-full py-2.5 rounded-xl text-sm font-semibold border border-white/10 text-slate-300 hover:text-white">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span>Star on GitHub</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="relative pt-32 pb-24 overflow-hidden">
+    <div class="absolute top-0 inset-x-0 h-[600px] glow-gradient pointer-events-none"></div>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-8 sm:pt-16 pb-16">
+      <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-8 backdrop-blur-md">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Intelligent AI Voice Dictation for Windows</span>
+        <span class="text-indigo-400/50">•</span>
+        <span class="font-mono text-indigo-200">a SumanOnline Project</span>
+      </div>
+
+      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white max-w-4xl mx-auto leading-[1.08]">
+        Turns your voice into <br class="hidden sm:inline">
+        <span class="font-serif italic font-normal text-indigo-300">clean, formatted writing.</span>
+      </h1>
+
+      <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed">
+        Hold a key, say what you mean, let go. No tab switching. No cleanup. Types directly at your system cursor in any application.
+      </p>
+
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest" class="w-full sm:w-auto flex items-center justify-center space-x-3 px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-xl shadow-indigo-600/30 badge-glow hover:scale-[1.02] active:scale-[0.98] transition-all">
+          <i data-lucide="download" class="w-5 h-5"></i>
+          <div class="text-left">
+            <div class="text-sm leading-tight">Download for Windows</div>
+            <div class="text-[11px] text-indigo-200 font-mono">Standalone Setup .exe (~118 MB)</div>
+          </div>
+        </a>
+
+        <a href="#how" class="w-full sm:w-auto flex items-center justify-center space-x-2 px-6 py-4 rounded-2xl border border-white/10 hover:border-white/20 bg-white/[0.03] hover:bg-white/[0.06] text-slate-300 hover:text-white font-semibold transition-all">
+          <i data-lucide="play-circle" class="w-5 h-5 text-indigo-400"></i>
+          <span>See How It Works</span>
+        </a>
+      </div>
+
+      <div class="mt-6 flex items-center justify-center space-x-6 text-xs text-slate-400 font-mono">
+        <div class="flex items-center space-x-1.5">
+          <i data-lucide="keyboard" class="w-4 h-4 text-slate-400"></i>
+          <span>Global Hotkey: <strong class="text-slate-200">Right Alt</strong></span>
+        </div>
+        <span class="text-slate-700">•</span>
+        <div class="flex items-center space-x-1.5">
+          <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
+          <span>Double-Tap for Hands-Free</span>
+        </div>
+        <span class="text-slate-700 hidden sm:inline">•</span>
+        <div class="hidden sm:flex items-center space-x-1.5">
+          <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+          <span>Zero Audio Stored</span>
+        </div>
+      </div>
+
+      <div class="mt-14 max-w-4xl mx-auto">
+        <div class="relative rounded-3xl border border-white/10 bg-[#0C101A]/90 p-2 sm:p-3 shadow-[0_30px_90px_-20px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+          <div class="rounded-2xl bg-[#07090E] border border-white/5 overflow-hidden">
+            <div class="flex items-center justify-between border-b border-white/5 px-6 py-4 bg-slate-900/40">
+              <div class="flex items-center space-x-2">
+                <span class="h-3 w-3 rounded-full bg-[#ff5f57]/80 inline-block"></span>
+                <span class="h-3 w-3 rounded-full bg-[#febc2e]/80 inline-block"></span>
+                <span class="h-3 w-3 rounded-full bg-[#28c840]/80 inline-block"></span>
+                <span class="text-xs text-slate-400 font-mono pl-2">Voice by SumanOnline — Telemetry Studio</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[11px] font-mono font-semibold">
+                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                  <span>LIVE DICTATION</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="px-6 py-4 flex items-center justify-between bg-slate-900/20 border-b border-white/5">
+              <div class="flex items-center space-x-2 text-xs font-mono text-slate-400">
+                <i data-lucide="mic" class="w-4 h-4 text-indigo-400"></i>
+                <span class="text-slate-200 font-semibold">Active Microphone</span>
+                <span class="text-slate-600">•</span>
+                <span id="demo-scenario-badge" class="text-indigo-400 font-medium">Scenario 1: Slack Update</span>
+              </div>
+              <div class="flex items-center space-x-1 bg-slate-900/80 p-1 rounded-xl border border-white/5">
+                <span id="badge-spoken" class="px-3 py-1 rounded-lg font-mono text-xs font-bold uppercase transition-all bg-white/10 text-white">Spoken</span>
+                <span id="badge-written" class="px-3 py-1 rounded-lg font-mono text-xs font-bold uppercase transition-all text-slate-400">Cleaned</span>
+              </div>
+            </div>
+
+            <div class="p-6 text-left">
+              <div class="min-h-[120px] rounded-2xl bg-[#05070B] border border-white/5 p-6 flex flex-col justify-center">
+                <div id="demo-thinking" class="hidden flex items-center space-x-3 text-indigo-400 font-mono text-sm py-4">
+                  <span class="flex space-x-1">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style="animation-delay: 0s"></span>
+                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style="animation-delay: 0.15s"></span>
+                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-bounce" style="animation-delay: 0.3s"></span>
+                  </span>
+                  <span class="text-xs uppercase tracking-wider font-semibold">Cleaning fillers and resolving punctuation (Groq 0.39s)...</span>
+                </div>
+                <div id="demo-text-box">
+                  <p id="demo-text" class="font-mono text-sm sm:text-base leading-relaxed text-slate-300"></p>
+                </div>
+              </div>
+
+              <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-end justify-center space-x-1 h-8" id="soundwave-container">
+                </div>
+
+                <div class="flex items-center space-x-4 text-xs font-mono text-slate-400">
+                  <span class="flex items-center space-x-1">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                    <span>Whisper: <strong class="text-white">0.61s</strong></span>
+                  </span>
+                  <span class="flex items-center space-x-1">
+                    <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                    <span>Groq LLM: <strong class="text-white">0.39s</strong></span>
+                  </span>
+                  <span class="flex items-center space-x-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span>Total Latency: <strong class="text-white">1.06s</strong></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/5">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold font-mono tracking-widest text-indigo-400 uppercase">FEATURES</span>
+        <h2 class="mt-3 text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+          Built for people who <br>
+          <span class="font-serif italic font-normal text-indigo-300">think out loud</span>
+        </h2>
+        <p class="mt-4 text-slate-400 text-base sm:text-lg">
+          Everything you need to get words down at the speed you talk, and nothing you don't.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="glass-card rounded-2xl p-8 relative overflow-hidden group transition-all">
+          <div class="flex items-center justify-between mb-6">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="radio" class="w-6 h-6"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-slate-400">01</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Speak Anywhere</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Hold one global hotkey and talk. Voice by SumanOnline types directly into any app on your machine, with no window to switch to.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8 relative overflow-hidden group transition-all">
+          <div class="flex items-center justify-between mb-6">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="sparkles" class="w-6 h-6"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-slate-400">02</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Cleaned As You Speak</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Filler words, stumbles, and false starts disappear instantly. What lands at your cursor is what you actually meant to say.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8 relative overflow-hidden group transition-all">
+          <div class="flex items-center justify-between mb-6">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="zap" class="w-6 h-6"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-slate-400">03</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Faster Than Typing</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Speak at 150 words per minute and watch it land as clean, formatted prose in ~1.0 second. Save 15+ hours of typing every week.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8 relative overflow-hidden group transition-all">
+          <div class="flex items-center justify-between mb-6">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="app-window" class="w-6 h-6"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-slate-400">04</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Works Everywhere</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Slack, Gmail, VS Code, Notion, WhatsApp, Microsoft Word, your terminal. Anywhere a system text cursor blinks.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8 relative overflow-hidden group transition-all">
+          <div class="flex items-center justify-between mb-6">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="book-a" class="w-6 h-6"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-slate-400">05</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Knows Your Words</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Personal dictionary integration: custom names, developer acronyms, and technical jargon (PyTorch, Next.js, K8s, SumanOnline) land spelled correctly.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8 relative overflow-hidden group transition-all">
+          <div class="flex items-center justify-between mb-6">
+            <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="shield-check" class="w-6 h-6"></i>
+            </div>
+            <span class="font-mono text-xs font-bold text-slate-400">06</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Private By Default</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Acoustic audio buffer is processed locally and discarded immediately. No voice is ever retained on disk or stored on third-party servers.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/5">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold font-mono tracking-widest text-indigo-400 uppercase">HOW IT WORKS</span>
+        <h2 class="mt-3 text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+          Three seconds to <br>
+          <span class="font-serif italic font-normal text-indigo-300">clean text</span>
+        </h2>
+        <p class="mt-4 text-slate-400 text-base sm:text-lg">
+          No complicated setup, no voice training, no dashboard to learn.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <div class="glass-card rounded-2xl p-8 relative border border-white/5">
+          <div class="w-10 h-10 rounded-full bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 font-mono font-bold flex items-center justify-center mb-6">
+            01
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Hold or Double-Tap</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Press and hold Right Alt (or double-tap for hands-free mode). A subtle floating soundwave HUD tells you Voice is listening.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8 relative border border-white/5">
+          <div class="w-10 h-10 rounded-full bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 font-mono font-bold flex items-center justify-center mb-6">
+            02
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Say It Out Loud</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Talk the way you naturally would. Ramble, pause, self-correct, or think out loud. Whisper and Vosk live preview keep up in real time.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8 relative border border-white/5">
+          <div class="w-10 h-10 rounded-full bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 font-mono font-bold flex items-center justify-center mb-6">
+            03
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Let Go</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Release the hotkey. Polished, punctuated, formatted text lands directly where your cursor was blinking.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="presets" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/5">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold font-mono tracking-widest text-indigo-400 uppercase">STYLE PRESETS</span>
+        <h2 class="mt-3 text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+          One voice. <br>
+          <span class="font-serif italic font-normal text-indigo-300">Five distinct outputs.</span>
+        </h2>
+        <p class="mt-4 text-slate-400 text-base sm:text-lg">
+          Switch tone effortlessly depending on whether you're chatting in Slack, writing code, or emailing an executive.
+        </p>
+      </div>
+
+      <div class="max-w-4xl mx-auto glass-card rounded-2xl p-6 sm:p-8">
+        <div class="flex flex-wrap gap-2 border-b border-white/5 pb-6" id="preset-buttons">
+          <button data-preset="smart" class="preset-btn px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md">Smart Dictation</button>
+          <button data-preset="executive" class="preset-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5">Executive</button>
+          <button data-preset="casual" class="preset-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5">Casual</button>
+          <button data-preset="notes" class="preset-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5">Bullet Notes</button>
+          <button data-preset="code" class="preset-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5">Developer / Code</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div class="p-5 rounded-xl bg-slate-900/40 border border-white/5">
+            <div class="text-xs font-bold font-mono text-slate-400 uppercase tracking-wider mb-2">Spoken Input (Raw)</div>
+            <p id="preset-raw" class="text-sm font-mono text-slate-300 leading-relaxed"></p>
+          </div>
+          <div class="p-5 rounded-xl bg-indigo-950/20 border border-indigo-500/20">
+            <div class="text-xs font-bold font-mono text-indigo-400 uppercase tracking-wider mb-2">Cleaned Output</div>
+            <p id="preset-clean" class="text-sm font-sans text-white leading-relaxed font-medium"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/5">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-bold font-mono tracking-widest text-indigo-400 uppercase">PRICING</span>
+        <h2 class="mt-3 text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+          Free. <span class="font-serif italic font-normal text-indigo-300">Actually free.</span>
+        </h2>
+        <p class="mt-4 text-slate-400 text-base sm:text-lg">
+          No trial periods, no hidden fees, no credit card required. A SumanOnline community project.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div class="glass-card rounded-2xl p-8 border border-white/10 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-white">Free</h3>
+              <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-white/10 text-slate-300">Community</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-6">Everything you need to stop typing forever.</p>
+            <div class="mb-6">
+              <span class="text-4xl font-bold text-white">$0</span>
+              <span class="text-xs text-slate-400 font-mono ml-1">/ forever</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-300 font-medium mb-8">
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>Unlimited voice dictation</span></li>
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>Works in every Windows app</span></li>
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>Local Whisper transcription</span></li>
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>Custom dictionary replacement</span></li>
+            </ul>
+          </div>
+          <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest" class="w-full text-center py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold transition-all">Download Free</a>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8 border border-indigo-500/40 relative flex flex-col justify-between shadow-xl shadow-indigo-600/10">
+          <div class="absolute -top-3 right-6 px-3 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-mono font-bold tracking-wider uppercase">Most Popular</div>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-white">Pro</h3>
+              <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">Cosmetic</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-6">For people who want the word "Pro" next to their name.</p>
+            <div class="mb-6">
+              <span class="text-4xl font-bold text-white">$0</span>
+              <span class="text-xs text-slate-400 font-mono ml-1">/ also forever</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-300 font-medium mb-8">
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>Everything in Free</span></li>
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>The Pro badge in settings</span></li>
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>Bring-your-own Groq API key</span></li>
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>Bragging rights included</span></li>
+            </ul>
+          </div>
+          <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest" class="w-full text-center py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold badge-glow transition-all">Download Free</a>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8 border border-white/10 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-white">Ultra</h3>
+              <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">Maximum</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-6">Maximum tier. Identical features. Zero dollars.</p>
+            <div class="mb-6">
+              <span class="text-4xl font-bold text-white">$0</span>
+              <span class="text-xs text-slate-400 font-mono ml-1">/ you guessed it</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-300 font-medium mb-8">
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>Everything in Pro</span></li>
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>An even better badge</span></li>
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>100% Offline fallback mode</span></li>
+              <li class="flex items-center space-x-2"><i data-lucide="check" class="w-4 h-4 text-indigo-400"></i><span>Our eternal gratitude</span></li>
+            </ul>
+          </div>
+          <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest" class="w-full text-center py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold transition-all">Download Free</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/5">
+      <div class="text-center mb-16">
+        <span class="text-xs font-bold font-mono tracking-widest text-indigo-400 uppercase">RESOURCES</span>
+        <h2 class="mt-3 text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+          Got <span class="font-serif italic font-normal text-indigo-300">questions?</span>
+        </h2>
+      </div>
+
+      <div class="space-y-4" id="faq-container">
+        <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left text-base font-semibold text-white hover:text-indigo-300 transition-colors">
+            <span>Is Voice by SumanOnline really free?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+          </button>
+          <div class="faq-content hidden px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+            Yes. Unlimited dictation, every single feature, no credit card required. It is an open-source project by SumanOnline designed for creators, writers, engineers, and thinkers.
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left text-base font-semibold text-white hover:text-indigo-300 transition-colors">
+            <span>Does my voice get stored anywhere?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+          </button>
+          <div class="faq-content hidden px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+            No. Your audio is captured into temporary memory, decoded through Whisper, passed for AI formatting, and wiped immediately. It is never saved to disk and never retained on a server.
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left text-base font-semibold text-white hover:text-indigo-300 transition-colors">
+            <span>Which apps does it work in?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+          </button>
+          <div class="faq-content hidden px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+            All of them. Voice by SumanOnline injects formatted text directly at your operating system text cursor. Anywhere you can type—Slack, Gmail, Notion, WhatsApp, VS Code, Word, or terminal—Voice by SumanOnline types for you.
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left text-base font-semibold text-white hover:text-indigo-300 transition-colors">
+            <span>What languages are supported?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+          </button>
+          <div class="faq-content hidden px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+            Over 90 languages are supported through Whisper, including English, Spanish, German, French, Hindi, Japanese, and multilingual code-switching.
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left text-base font-semibold text-white hover:text-indigo-300 transition-colors">
+            <span>How does the double-tap hands-free mode work?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+          </button>
+          <div class="faq-content hidden px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+            Press your global hotkey (Right Alt) twice rapidly to latch into hands-free mode. Speak as long as you want without holding down any key. When finished, press the hotkey once to finalize and paste your text.
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
+          <button class="faq-toggle w-full px-6 py-5 flex items-center justify-between text-left text-base font-semibold text-white hover:text-indigo-300 transition-colors">
+            <span>Do I need Python installed to run the app?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+          </button>
+          <div class="faq-content hidden px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+            No. The Windows setup installer bundles a completely self-contained runtime and all dependencies. You just run the installer and it works immediately on any Windows 10 or 11 computer.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="download" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <div class="relative rounded-3xl p-12 sm:p-16 overflow-hidden border border-indigo-500/30 bg-gradient-to-b from-indigo-950/40 via-panel to-bg shadow-2xl">
+        <div class="absolute -top-32 -left-32 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-32 -right-32 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <h2 class="text-4xl sm:text-5xl font-bold tracking-tight text-white mb-4">
+          From talking <span class="font-serif italic font-normal text-indigo-300">to written.</span>
+        </h2>
+        <p class="text-slate-400 max-w-xl mx-auto text-base sm:text-lg mb-8">
+          Join the creators and developers who stopped typing their first drafts.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline/releases/latest" class="flex items-center space-x-3 px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-xl shadow-indigo-600/30 badge-glow transition-all hover:scale-105">
+            <i data-lucide="download" class="w-5 h-5"></i>
+            <span>Download Voice by SumanOnline (.exe)</span>
+          </a>
+          <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-2 px-6 py-4 rounded-2xl border border-white/10 hover:bg-white/5 text-slate-300 hover:text-white font-semibold transition-all">
+            <i data-lucide="star" class="w-5 h-5 text-amber-400"></i>
+            <span>Star on GitHub</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/5 bg-[#05070B] py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg overflow-hidden border border-white/10">
+          <img src="assets/logo.png" alt="Voice by SumanOnline Logo" class="w-full h-full object-cover">
+        </div>
+        <div>
+          <span class="font-bold text-white text-sm">Voice by SumanOnline</span>
+          <span class="text-xs text-slate-400 block font-mono">a SumanOnline Project</span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-6 text-xs text-slate-400">
+        <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#how" class="hover:text-white transition-colors">How it Works</a>
+        <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+        <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+        <a href="https://github.com/SumanCH8514/Voice-by-SumanOnline" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub</a>
+      </div>
+
+      <div class="text-xs text-slate-400 font-mono">
+        &copy; 2026 SumanOnline. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+    }
+
+    const scenarios = [
+      {
+        badge: 'Scenario 1: Slack Update',
+        raw: 'hey so um I was thinking we should probably wait until Tuesday to ship this just in case',
+        clean: 'I recommend waiting until Tuesday to deploy this, as a precaution.'
+      },
+      {
+        badge: 'Scenario 2: Developer Bug Report',
+        raw: 'so the bug happens when you click submit twice really fast and then it like duplicates the order somehow',
+        clean: 'The bug occurs when Submit is clicked twice quickly, which duplicates the order.'
+      },
+      {
+        badge: 'Scenario 3: Executive Follow-up',
+        raw: 'thanks so much for the review i\'ll uh get those changes in by end of day tomorrow at the latest',
+        clean: 'Thanks for the review. I will incorporate those revisions by end of day tomorrow.'
+      },
+      {
+        badge: 'Scenario 4: Technical Dictionary',
+        raw: 'import pie torch and initialize suman online voice pipeline with k eight s support',
+        clean: 'import torch\nfrom suman_online import VoicePipeline\npipeline = VoicePipeline(cluster="K8s")'
+      }
+    ];
+
+    let currentIdx = 0;
+    const demoBadge = document.getElementById('demo-scenario-badge');
+    const badgeSpoken = document.getElementById('badge-spoken');
+    const badgeWritten = document.getElementById('badge-written');
+    const demoText = document.getElementById('demo-text');
+    const demoThinking = document.getElementById('demo-thinking');
+    const demoTextBox = document.getElementById('demo-text-box');
+
+    const soundwaveContainer = document.getElementById('soundwave-container');
+    if (soundwaveContainer) {
+      for (let i = 0; i < 24; i++) {
+        const bar = document.createElement('span');
+        const h = Math.floor(Math.sin(i * 0.3) * 16 + 18);
+        bar.className = 'w-[3px] rounded-full wave-bar bg-indigo-500/70 transition-all';
+        bar.style.height = `${h}px`;
+        bar.style.animationDelay = `${(i * 45) % 1200}ms`;
+        soundwaveContainer.appendChild(bar);
+      }
+    }
+
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    async function runTypewriter(text, step, delay) {
+      for (let i = 0; i <= text.length; i += step) {
+        demoText.innerText = text.slice(0, i);
+        await sleep(delay);
+      }
+      demoText.innerText = text;
+    }
+
+    async function cycleDemo() {
+      while (true) {
+        const item = scenarios[currentIdx];
+        demoBadge.innerText = item.badge;
+
+        badgeSpoken.className = 'px-3 py-1 rounded-lg font-mono text-xs font-bold uppercase transition-all bg-white/15 text-white';
+        badgeWritten.className = 'px-3 py-1 rounded-lg font-mono text-xs font-bold uppercase transition-all text-slate-500';
+        demoThinking.classList.add('hidden');
+        demoTextBox.classList.remove('hidden');
+        demoText.className = 'font-mono text-sm sm:text-base leading-relaxed text-slate-300';
+
+        await runTypewriter(item.raw, 1, 22);
+        await sleep(700);
+
+        demoTextBox.classList.add('hidden');
+        demoThinking.classList.remove('hidden');
+        await sleep(700);
+
+        badgeSpoken.className = 'px-3 py-1 rounded-lg font-mono text-xs font-bold uppercase transition-all text-slate-500';
+        badgeWritten.className = 'px-3 py-1 rounded-lg font-mono text-xs font-bold uppercase transition-all bg-indigo-600 text-white shadow-md shadow-indigo-600/30';
+        demoThinking.classList.add('hidden');
+        demoTextBox.classList.remove('hidden');
+        demoText.className = 'font-sans font-medium text-sm sm:text-base leading-relaxed text-indigo-200';
+
+        await runTypewriter(item.clean, 2, 18);
+        await sleep(2400);
+
+        currentIdx = (currentIdx + 1) % scenarios.length;
+      }
+    }
+
+    cycleDemo();
+
+    const presetExamples = {
+      smart: {
+        raw: 'hey team um please make sure to review the pr before deployment today thanks',
+        clean: 'Hey team, please make sure to review the PR before deployment today. Thanks!'
+      },
+      executive: {
+        raw: 'we need to cut down our api costs by next quarter or else the budget is blown',
+        clean: 'We must optimize our API expenditures by Q2 to align with our quarterly budget allocation.'
+      },
+      casual: {
+        raw: 'yeah absolutely i will be there in like 10 mins see ya soon',
+        clean: 'Yeah absolutely, I\'ll be there in ~10 mins! See you soon.'
+      },
+      notes: {
+        raw: 'first run test suite then verify edge webview connection and finally compile standalone exe installer',
+        clean: '• Run automated test suite\n• Verify Edge WebView2 connection barrier\n• Compile standalone executable installer'
+      },
+      code: {
+        raw: 'function calculate latency breakdown returning total duration as float',
+        clean: 'def calculate_latency_breakdown() -> float:\n    return round(time.monotonic() - release_ts, 3)'
+      }
+    };
+
+    const presetBtns = document.querySelectorAll('.preset-btn');
+    const presetRaw = document.getElementById('preset-raw');
+    const presetClean = document.getElementById('preset-clean');
+
+    function selectPreset(id) {
+      presetBtns.forEach((btn) => {
+        if (btn.dataset.preset === id) {
+          btn.className = 'preset-btn px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-md shadow-indigo-600/30';
+        } else {
+          btn.className = 'preset-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5';
+        }
+      });
+      const data = presetExamples[id] || presetExamples.smart;
+      presetRaw.innerText = data.raw;
+      presetClean.innerText = data.clean;
+    }
+
+    presetBtns.forEach((btn) => {
+      btn.addEventListener('click', () => selectPreset(btn.dataset.preset));
+    });
+
+    selectPreset('smart');
+
+    const faqToggles = document.querySelectorAll('.faq-toggle');
+    faqToggles.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const content = btn.nextElementSibling;
+        const icon = btn.querySelector('[data-lucide="chevron-down"]');
+        const isHidden = content.classList.contains('hidden');
+
+        document.querySelectorAll('.faq-content').forEach((c) => c.classList.add('hidden'));
+        document.querySelectorAll('.faq-toggle [data-lucide="chevron-down"]').forEach((i) => i.classList.remove('rotate-180'));
+
+        if (isHidden) {
+          content.classList.remove('hidden');
+          if (icon) icon.classList.add('rotate-180');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
