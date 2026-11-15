@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -255,3 +255,114 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
 ui_dist = Path(__file__).resolve().parent.parent / "ui" / "dist"
 if ui_dist.exists() and (ui_dist / "index.html").exists():
     app.mount("/", StaticFiles(directory=str(ui_dist), html=True), name="static_ui")
+else:
+    @app.get("/", response_class=HTMLResponse)
+    async def fallback_studio_ui() -> str:
+        return """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice by SumanOnline — Voice Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #080C14; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between">
+  <div class="max-w-4xl mx-auto w-full p-6 space-y-6">
+    <header class="flex items-center justify-between border-b border-slate-800 pb-5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-white">Voice by SumanOnline</h1>
+          <p class="text-xs text-slate-400">Desktop Voice Dictation Engine</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+          Engine Running
+        </span>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-xl">
+        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Dictation Mode</div>
+        <div class="text-xl font-bold text-white flex items-center gap-2">
+          <span>Push-to-Talk</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">Right Alt</span>
+        </div>
+        <div class="text-xs text-slate-400 mt-2">Hold down your key anywhere to dictate, release to insert text.</div>
+      </div>
+
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-xl">
+        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Live Status</div>
+        <div id="statusBadge" class="text-xl font-bold text-slate-300">Ready (Idle)</div>
+        <div class="text-xs text-slate-400 mt-2">Floating HUD pill is active on your screen.</div>
+      </div>
+
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 backdrop-blur-xl">
+        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Quick Controls</div>
+        <div class="flex gap-2">
+          <button id="toggleBtn" onclick="toggleDictation()" class="flex-1 py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition">Trigger Dictation</button>
+          <button id="muteBtn" onclick="toggleMute()" class="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition">Mute</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-xl">
+      <h2 class="text-sm font-semibold text-white mb-3">Live Streaming Transcript</h2>
+      <div id="transcriptBox" class="min-h-[100px] p-4 rounded-xl bg-slate-950/60 border border-slate-800 font-sans text-sm text-slate-300">
+        Press or hold <span class="text-indigo-400 font-medium">Right Alt</span> to begin speaking...
+      </div>
+    </div>
+  </div>
+
+  <footer class="max-w-4xl mx-auto w-full p-6 text-center text-xs text-slate-400 border-t border-slate-800/80">
+    Voice by SumanOnline &bull; Low-latency AI Voice Dictation &bull; Port 48922
+  </footer>
+
+  <script>
+    const ws = new WebSocket(`ws://${location.host}/ws/live`);
+    const statusBadge = document.getElementById('statusBadge');
+    const transcriptBox = document.getElementById('transcriptBox');
+    const muteBtn = document.getElementById('muteBtn');
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'state_changed') {
+          if (data.state === 'recording') {
+            statusBadge.innerHTML = '<span class="text-rose-400 animate-pulse">● Recording...</span>';
+          } else if (data.state === 'processing') {
+            statusBadge.innerHTML = '<span class="text-amber-400">⚡ Formatting...</span>';
+          } else {
+            statusBadge.innerText = 'Ready (Idle)';
+          }
+        } else if (data.type === 'preview_text' && data.text) {
+          transcriptBox.innerText = data.text;
+        } else if (data.type === 'final_result' && data.cleaned) {
+          transcriptBox.innerHTML = `<strong>Final:</strong> ${data.cleaned} <span class="text-xs text-indigo-400">(${data.latency_s}s)</span>`;
+        } else if (data.type === 'mute_changed') {
+          muteBtn.innerText = data.muted ? 'Unmute' : 'Mute';
+          muteBtn.className = data.muted ? 'py-2 px-3 rounded-xl bg-rose-600/20 text-rose-300 text-xs font-semibold' : 'py-2 px-3 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold';
+        }
+      } catch (e) {}
+    };
+
+    async function toggleDictation() {
+      await fetch('/api/toggle-recording', { method: 'POST' });
+    }
+
+    async function toggleMute() {
+      await fetch('/api/toggle-mute', { method: 'POST' });
+    }
+  </script>
+</body>
+</html>"""

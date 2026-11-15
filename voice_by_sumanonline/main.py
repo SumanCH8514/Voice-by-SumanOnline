@@ -397,7 +397,7 @@ def main(argv: Optional[list] = None) -> int:
     streaming_preview = StreamingPreview()
     preview_enabled = bool(config.get("transcription", {}).get("preview_enabled", True))
     if preview_enabled:
-        streaming_preview.initialize()
+        threading.Thread(target=streaming_preview.initialize, daemon=True, name="VoskInit").start()
     app_state.set_preview(streaming_preview)
 
     def on_preview_text(txt: str) -> None:

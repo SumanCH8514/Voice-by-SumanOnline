@@ -37,7 +37,7 @@ if (-not (Test-Path $PythonwExe)) {
 Write-Host "[2/4] Creating Desktop Shortcut..." -ForegroundColor Yellow
 $DesktopShortcut = $WshShell.CreateShortcut("$DesktopPath\Voice by SumanOnline.lnk")
 $DesktopShortcut.TargetPath = $PythonwExe
-$DesktopShortcut.Arguments = "-m voice_by_sumanonline.main"
+$DesktopShortcut.Arguments = "-m voice_by_sumanonline.main --ui"
 $DesktopShortcut.WorkingDirectory = $ProjectRoot
 $DesktopShortcut.Description = "Voice by SumanOnline - AI Voice Dictation App"
 $DesktopShortcut.Save()
@@ -49,7 +49,7 @@ if (-not (Test-Path $StartMenuDir)) {
 }
 $StartMenuShortcut = $WshShell.CreateShortcut("$StartMenuDir\Voice by SumanOnline.lnk")
 $StartMenuShortcut.TargetPath = $PythonwExe
-$StartMenuShortcut.Arguments = "-m voice_by_sumanonline.main"
+$StartMenuShortcut.Arguments = "-m voice_by_sumanonline.main --ui"
 $StartMenuShortcut.WorkingDirectory = $ProjectRoot
 $StartMenuShortcut.Description = "Voice by SumanOnline - AI Voice Dictation App"
 $StartMenuShortcut.Save()

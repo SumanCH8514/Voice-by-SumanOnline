@@ -599,11 +599,12 @@ else:
         WS_EX_TOOLWINDOW = 0x00000080
 
         if ctypes.sizeof(ctypes.c_void_p) == 8:
+            _LONG_PTR = ctypes.c_ssize_t
             _SetWindowLongPtrW = _user32.SetWindowLongPtrW
-            _SetWindowLongPtrW.restype = wintypes.LONG_PTR
-            _SetWindowLongPtrW.argtypes = [wintypes.HWND, ctypes.c_int, wintypes.LONG_PTR]
+            _SetWindowLongPtrW.restype = _LONG_PTR
+            _SetWindowLongPtrW.argtypes = [wintypes.HWND, ctypes.c_int, _LONG_PTR]
             _GetWindowLongPtrW = _user32.GetWindowLongPtrW
-            _GetWindowLongPtrW.restype = wintypes.LONG_PTR
+            _GetWindowLongPtrW.restype = _LONG_PTR
             _GetWindowLongPtrW.argtypes = [wintypes.HWND, ctypes.c_int]
         else:
             _SetWindowLongPtrW = _user32.SetWindowLongW
