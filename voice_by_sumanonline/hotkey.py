@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 import threading
+import time
 from typing import Any, Callable, Dict, List, Optional
 
 from pynput import keyboard
@@ -17,6 +18,7 @@ class PushToTalk:
         on_release: Callable[[], None],
         key: Optional[Any] = None,
         toggle_mode: bool = False,
+        double_tap_interval: float = 0.40,
     ) -> None:
         self._on_press = on_press
         self._on_release = on_release
@@ -25,6 +27,11 @@ class PushToTalk:
         self._held = False
         self._toggle_mode = toggle_mode
         self._is_recording_toggle = False
+        self._double_tap_interval = double_tap_interval
+        self._press_time = 0.0
+        self._waiting_for_second_tap = False
+        self._is_latched = False
+        self._tap_timer: Optional[threading.Timer] = None
         self._lock = threading.Lock()
         self._listener: Optional[Any] = None
 
@@ -39,6 +46,11 @@ class PushToTalk:
     @property
     def toggle_mode(self) -> bool:
         return self._toggle_mode
+
+    @property
+    def is_latched(self) -> bool:
+        with self._lock:
+            return self._is_latched
 
     def set_toggle_mode(self, enabled: bool) -> None:
         with self._lock:
@@ -98,6 +110,36 @@ class PushToTalk:
         self._listener.daemon = True
         self._listener.start()
 
+    def _cancel_tap_timer_locked(self) -> None:
+        if self._tap_timer is not None:
+            try:
+                self._tap_timer.cancel()
+            except Exception:
+                pass
+            self._tap_timer = None
+
+    def force_start_latched(self) -> None:
+        with self._lock:
+            self._cancel_tap_timer_locked()
+            self._waiting_for_second_tap = False
+            self._is_latched = True
+            self._held = False
+        try:
+            self._on_press()
+        except Exception as e:
+            log.exception("force_start_latched failed: %s", e)
+
+    def force_stop(self) -> None:
+        with self._lock:
+            self._cancel_tap_timer_locked()
+            self._waiting_for_second_tap = False
+            self._is_latched = False
+            self._held = False
+        try:
+            self._on_release()
+        except Exception as e:
+            log.exception("force_stop failed: %s", e)
+
     def stop(self) -> None:
         if self._listener is not None:
             try:
@@ -106,7 +148,10 @@ class PushToTalk:
                 pass
             self._listener = None
         with self._lock:
+            self._cancel_tap_timer_locked()
             self._held = False
+            self._waiting_for_second_tap = False
+            self._is_latched = False
             self._is_recording_toggle = False
 
     def _matches_target(self, key: Any) -> bool:
@@ -127,22 +172,33 @@ class PushToTalk:
             self._handle_release()
 
     def _handle_press(self) -> None:
+        trigger_start = False
+        trigger_stop = False
+
         with self._lock:
+            now = time.monotonic()
             if self._toggle_mode:
                 if not self._is_recording_toggle:
                     self._is_recording_toggle = True
                     trigger_start = True
-                    trigger_stop = False
                 else:
                     self._is_recording_toggle = False
-                    trigger_start = False
                     trigger_stop = True
             else:
                 if self._held:
                     return
                 self._held = True
-                trigger_start = True
-                trigger_stop = False
+                self._press_time = now
+
+                if self._is_latched:
+                    self._is_latched = False
+                    trigger_stop = True
+                elif self._waiting_for_second_tap:
+                    self._cancel_tap_timer_locked()
+                    self._waiting_for_second_tap = False
+                    self._is_latched = True
+                else:
+                    trigger_start = True
 
         if trigger_start:
             try:
@@ -156,6 +212,8 @@ class PushToTalk:
                 log.exception("on_release failed: %s", e)
 
     def _handle_release(self) -> None:
+        trigger_stop = False
+
         with self._lock:
             if self._toggle_mode:
                 return
@@ -163,10 +221,40 @@ class PushToTalk:
                 return
             self._held = False
 
-        try:
-            self._on_release()
-        except Exception as e:
-            log.exception("on_release failed: %s", e)
+            if self._is_latched:
+                return
+
+            duration = time.monotonic() - self._press_time
+            if duration < self._double_tap_interval:
+                self._waiting_for_second_tap = True
+                self._cancel_tap_timer_locked()
+                self._tap_timer = threading.Timer(
+                    self._double_tap_interval,
+                    self._on_single_tap_timeout,
+                )
+                self._tap_timer.daemon = True
+                self._tap_timer.start()
+                return
+            else:
+                trigger_stop = True
+
+        if trigger_stop:
+            try:
+                self._on_release()
+            except Exception as e:
+                log.exception("on_release failed: %s", e)
+
+    def _on_single_tap_timeout(self) -> None:
+        trigger_stop = False
+        with self._lock:
+            if self._waiting_for_second_tap and not self._is_latched:
+                self._waiting_for_second_tap = False
+                trigger_stop = True
+        if trigger_stop:
+            try:
+                self._on_release()
+            except Exception as e:
+                log.exception("on_release failed on tap timeout: %s", e)
 
 def _want_evdev() -> bool:
     if os.environ.get("VOICE_HOTKEY_BACKEND") == "evdev":

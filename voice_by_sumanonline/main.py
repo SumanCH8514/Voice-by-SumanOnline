@@ -183,10 +183,10 @@ def manual_trigger_dictation() -> str:
         return "idle"
     app = _GLOBAL_APP_STATE
     if not app.is_recording:
-        app._ptt._handle_press()
+        app._ptt.force_start_latched()
         return "recording"
     else:
-        app._ptt._handle_release()
+        app._ptt.force_stop()
         return "processing"
 
 def toggle_global_mute() -> bool:
