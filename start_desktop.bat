@@ -1,5 +1,11 @@
 @echo off
 cd /d "%~dp0"
+
+if exist "runtime\pythonw.exe" (
+    start "" "runtime\pythonw.exe" -m voice_by_sumanonline.main --ui
+    exit /b 0
+)
+
 set "UV_EXE="
 if exist "%USERPROFILE%\.local\bin\uv.exe" (
     set "UV_EXE=%USERPROFILE%\.local\bin\uv.exe"

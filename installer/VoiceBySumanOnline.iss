@@ -7,12 +7,14 @@ DefaultGroupName=Voice by SumanOnline
 OutputDir=dist
 OutputBaseFilename=Voice-by-SumanOnline-Setup
 SetupIconFile=..\assets\logo.ico
-Compression=lzma2
+Compression=lzma2/max
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequired=lowest
 DisableProgramGroupPage=yes
 UninstallDisplayIcon={app}\assets\logo.ico
+CloseApplications=yes
+RestartApplications=no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -23,19 +25,16 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\\start_desktop.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\pyproject.toml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\\uv.lock"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\\assets\\*"; DestDir: "{app}\\assets"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\voice_by_sumanonline\\*"; DestDir: "{app}\\voice_by_sumanonline"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\\ui\\dist\\*"; DestDir: "{app}\\ui\\dist"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\\installer\\install.ps1"; DestDir: "{app}\\installer"; Flags: ignoreversion
-Source: "..\\crates\\voice-launcher\\*"; DestDir: "{app}\\crates\\voice-launcher"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "runtime\\*"; DestDir: "{app}\\runtime"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\\Voice by SumanOnline"; Filename: "{app}\\start_desktop.bat"; IconFilename: "{app}\\assets\\logo.ico"
+Name: "{group}\\Voice by SumanOnline"; Filename: "{app}\\runtime\\pythonw.exe"; Parameters: "-m voice_by_sumanonline.main --ui"; WorkingDir: "{app}"; IconFilename: "{app}\\assets\\logo.ico"
 Name: "{group}\\Uninstall Voice by SumanOnline"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\\Voice by SumanOnline"; Filename: "{app}\\start_desktop.bat"; IconFilename: "{app}\\assets\\logo.ico"; Tasks: desktopicon
+Name: "{autodesktop}\\Voice by SumanOnline"; Filename: "{app}\\runtime\\pythonw.exe"; Parameters: "-m voice_by_sumanonline.main --ui"; WorkingDir: "{app}"; IconFilename: "{app}\\assets\\logo.ico"; Tasks: desktopicon
 
 [Run]
-Filename: "powershell.exe"; Parameters: "-ExecutionPolicy Bypass -File ""{app}\\installer\\install.ps1"""; Flags: runhidden
-Filename: "{app}\\start_desktop.bat"; Description: "{cm:LaunchProgram,Voice by SumanOnline}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\\runtime\\pythonw.exe"; Parameters: "-m voice_by_sumanonline.main --ui"; WorkingDir: "{app}"; Description: "{cm:LaunchProgram,Voice by SumanOnline}"; Flags: nowait postinstall skipifsilent
